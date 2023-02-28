@@ -1,0 +1,24 @@
+# ninja log v5
+0	69	6992964586342430	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+2	58	6992966534741436	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+58	121	6992966535357233	DipLevel1_bank.exe	2a42d3c692437811
+0	58	6992971067024530	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+58	124	6992971067640245	DipLevel1_bank.exe	2a42d3c692437811
+1	64	6992977044045276	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+65	185	6992977045217178	DipLevel1_bank.exe	2a42d3c692437811
+1	69	6992986423768426	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+69	135	6992986424406222	DipLevel1_bank.exe	2a42d3c692437811
+1	59	6992987470328831	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+165	235	6992987472063875	DipLevel1_bank.exe	2a42d3c692437811
+1	72	6992989872375990	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+77	144	6992989873076856	DipLevel1_bank.exe	2a42d3c692437811
+1	64	6992991190223280	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+69	136	6992991190916122	DipLevel1_bank.exe	2a42d3c692437811
+2	63	6993000072265340	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+68	141	6993000073026030	DipLevel1_bank.exe	2a42d3c692437811
+1	62	6993000541906002	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+63	145	6993000542696721	DipLevel1_bank.exe	2a42d3c692437811
+2	66	6993009471480948	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+67	134	6993009472147387	DipLevel1_bank.exe	2a42d3c692437811
+1	65	6993010149229634	CMakeFiles/DipLevel1_bank.dir/main.c.obj	8adfd83a9e97077c
+67	131	6993010149885342	DipLevel1_bank.exe	2a42d3c692437811
