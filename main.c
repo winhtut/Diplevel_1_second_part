@@ -12,6 +12,8 @@ int main(){
     printingAllData();
     welcome();
 
+//    integer_to_char(1000);
+
     return 0;
 }
 

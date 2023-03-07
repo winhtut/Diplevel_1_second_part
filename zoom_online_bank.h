@@ -50,6 +50,7 @@ int phone_found=-1;
 
 // global array
 int space_array[30];
+char int_to_char_array_data[10];
 
 
 // For Function Declaration
@@ -71,7 +72,8 @@ void finding_phone_number(unsigned int tofind);
 void transfer_money(int transfer , int receiver , unsigned int amount);
 void space_counter();
 void recording_alldata_toFile();
-
+void transaction_record(int transfer , int receiver , char who,unsigned int amount);
+void integer_to_char(unsigned int value);
 
 void welcome(){
 
@@ -181,7 +183,7 @@ void userSector(){
         }
 
         transfer_money(emailExist,phone_found,amount_to_transfer);
-        printingAllData();
+
         userSector();
 
 
@@ -197,12 +199,108 @@ void transfer_money(int transfer , int receiver , unsigned int amount){
     printf("loading to transfer.....\n");
     db[transfer].cur_amount = db[transfer].cur_amount-amount;
     db[receiver].cur_amount = db[receiver].cur_amount+amount;
-    printf("transaction complete!");
+    printf("transaction complete!\n");
+    transaction_record(transfer,receiver,'t',amount);
+    transaction_record(transfer,receiver,'r',amount);
+    printingAllData();
 
 
 
 }
 
+void transaction_record(int transfer , int receiver , char who,unsigned int amount){
+// from-WinHtut-to-lonelone-100
+    int trans_name_counter = charCounting(db[transfer].name);
+    int receive_name_counter = charCounting(db[receiver].name);
+    integer_to_char(amount);
+    int amount_counter = charCounting(int_to_char_array_data);
+
+    char from[5]={'F','r','o','m','-'};
+    char to[4]={'-','t','o','-'};
+
+    if(who == 't'){
+        int index_point=0;
+        for(int i=0; i<5; i++){
+            db[transfer].trc[space_array[transfer]-15].note[i] = from[i];
+            index_point++;
+        }
+        //int aaa=0;
+        //int end_point = trans_name_counter+index_point;
+        for(int a=0; a<trans_name_counter; a++){
+
+            db[transfer].trc[space_array[transfer]-15].note[index_point]=db[transfer].name[a];
+            index_point++;
+
+        }
+        for(int a=0; a<4; a++){
+            db[transfer].trc[space_array[transfer]-15].note[index_point]=to[a];
+            index_point++;
+        }
+        for (int aaa = 0; aaa < receive_name_counter; ++aaa) {
+            db[transfer].trc[space_array[transfer]-15].note[index_point]=db[receiver].name[aaa];
+            index_point++;
+
+        }
+
+        for(int aaa=0; aaa<amount_counter; aaa++){
+            db[transfer].trc[space_array[transfer]-15].note[index_point]=int_to_char_array_data[aaa];
+            index_point++;
+        }
+
+        space_array[transfer] +=1;
+
+
+    } else{
+        //lonelone-
+        char rec[14]={'-','R','e','c','e','i','v','e','-','F','r','o','m','-'};
+
+        int index_point=0;
+
+        for(int a=0; a<receive_name_counter; a++){
+            db[receiver].trc[space_array[receiver]-15].note[index_point]=db[receiver].name[a];
+            index_point++;
+
+        }
+        for(int a=0; a<14; a++){
+            db[receiver].trc[space_array[receiver]-15].note[index_point]=rec[a];
+            index_point++;
+        }
+        for(int a=0; a<trans_name_counter; a++){
+            db[receiver].trc[space_array[receiver]-15].note[index_point]=db[transfer].name[a];
+            index_point++;
+        }
+
+        for(int aaa=0; aaa<amount_counter; aaa++){
+            db[receiver].trc[space_array[receiver]-15].note[index_point]=int_to_char_array_data[aaa];
+            index_point++;
+        }
+
+        space_array[receiver] +=1;
+
+
+    }
+
+
+
+
+}
+
+void integer_to_char(unsigned int value){
+
+    FILE *fptr = fopen("100.txt","w");
+
+    if(fptr==NULL){
+        printf("file opening error at integer_to_char:\n");
+    } else{
+        fprintf(fptr,"%u",value);
+    }
+    fclose(fptr);
+
+    FILE *fptr2 = fopen("100.txt","r");
+    fscanf(fptr2,"%s",&int_to_char_array_data[0]);
+
+
+}
 
 
 //id name nrc email password pOrb loan_status monthly_income
