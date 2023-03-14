@@ -12,6 +12,9 @@ int main(){
     printingAllData();
     welcome();
 
+//    get_time();
+//    printf("current edited time :%s",Ctime[0].c_time);
+
 //    integer_to_char(1000);
 
     return 0;

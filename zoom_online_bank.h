@@ -6,6 +6,7 @@
 #define DIPLEVEL1_ZOOM_ONLINE_BANK_H
 
 #include "stdio.h"
+#include "time.h"
 #include "stdlib.h"
 #define SIZE 1000 // symbolic constant
 struct trans{
@@ -36,6 +37,14 @@ struct data{
 
 struct data db[SIZE];
 
+
+struct my_time{
+    char c_time[25];
+
+};
+
+struct my_time Ctime[1];
+
 // Global Variable Declaration
 
 int users=0;
@@ -47,6 +56,8 @@ int nrc_valid = -1;
 int strongPass=-1;
 int phone_valid=-1;
 int phone_found=-1;
+
+int trans_limit=0;
 
 // global array
 int space_array[30];
@@ -74,6 +85,8 @@ void space_counter();
 void recording_alldata_toFile();
 void transaction_record(int transfer , int receiver , char who,unsigned int amount);
 void integer_to_char(unsigned int value);
+void get_time();
+void get_limit_amount(int user_index);
 
 void welcome(){
 
@@ -197,14 +210,14 @@ void userSector(){
 void transfer_money(int transfer , int receiver , unsigned int amount){
 
     printf("loading to transfer.....\n");
+
+    // to insert transaction amount limit per day function
     db[transfer].cur_amount = db[transfer].cur_amount-amount;
     db[receiver].cur_amount = db[receiver].cur_amount+amount;
     printf("transaction complete!\n");
     transaction_record(transfer,receiver,'t',amount);
     transaction_record(transfer,receiver,'r',amount);
     printingAllData();
-
-
 
 }
 
@@ -247,6 +260,14 @@ void transaction_record(int transfer , int receiver , char who,unsigned int amou
             index_point++;
         }
 
+        get_time();
+        for(int i=0; i<25; i++){
+
+            db[transfer].trc[space_array[transfer]-15].note[index_point]=Ctime[0].c_time[i];
+            index_point++;
+        }
+
+
         space_array[transfer] +=1;
 
 
@@ -275,12 +296,16 @@ void transaction_record(int transfer , int receiver , char who,unsigned int amou
             index_point++;
         }
 
+        get_time();
+        for(int a=0; a<25; a++){
+            db[receiver].trc[space_array[receiver]-15].note[index_point]=Ctime[0].c_time[a];
+            index_point++;
+        }
+
         space_array[receiver] +=1;
 
 
     }
-
-
 
 
 }
@@ -749,5 +774,111 @@ void finding_phone_number(unsigned int tofind){
 
 }
 
+void get_time(){
+    time_t tm;
+    time(&tm);
+
+    printf("Current time =%s\n", ctime(&tm));
+
+    FILE *fptr = fopen("myTime.txt","w");
+    fprintf(fptr,"%s", ctime(&tm));
+
+    fclose(fptr);
+
+    int index=0;
+    int time_space_counter=0;
+
+    Ctime[0].c_time[index]='-';
+    index++;
+
+    FILE *fptr2 = fopen("myTime.txt","r");
+    char c = fgetc(fptr2);
+
+    while (!feof(fptr2)){
+
+        if( c==' '){
+
+            time_space_counter++;
+
+            if(time_space_counter == 1){
+                Ctime[0].c_time[index]='!';
+                c = fgetc(fptr2);
+                index++;
+            } else if(time_space_counter==4){
+                Ctime[0].c_time[index]='@';
+                c = fgetc(fptr2);
+                index++;
+            } else{
+                Ctime[0].c_time[index]='-';
+                c = fgetc(fptr2);
+                index++;
+            }
+
+
+        } else{
+
+            Ctime[0].c_time[index]=c;
+            c = fgetc(fptr2);
+            index++;
+
+        }
+
+
+    }
+
+}
+
+
+void get_limit_amount(int user_index){
+
+    // 1 for personal and 2 for business
+    int acc_level = db[user_index].acc_level;
+    char pOrb =db[user_index].pOrb[0];
+    int p_or_b = 0;
+    if(pOrb == 'p'){
+        p_or_b=1;
+    } else{
+        p_or_b=2;
+    }
+
+    switch (acc_level) {
+        case 1:
+            if(p_or_b==1){
+                trans_limit=100000;
+            } else{
+                trans_limit=1000000;
+            }
+            break;
+        case 2:
+            if(p_or_b==1){
+                trans_limit=50000;
+            } else{
+                trans_limit=500000;
+            }
+            break;
+        case 3:
+            if(p_or_b==1){
+                trans_limit=10000;
+            } else{
+                trans_limit=100000;
+            }
+            break;
+        default:
+            break;
+    }
+
+
+}
+
+void get_record(){
+
+
+
+
+}
 
 #endif //DIPLEVEL1_ZOOM_ONLINE_BANK_H
+
+
+// to write get_record function
+// to calculate time different and trans limit
