@@ -62,6 +62,11 @@ int trans_limit=0;
 // global array
 int space_array[30];
 char int_to_char_array_data[10];
+unsigned int charArray_to_unsignedInt_data=0;
+
+
+unsigned int current_day_to_transfer=0;
+unsigned int current_amount_to_transfer=0;
 
 
 // For Function Declaration
@@ -85,8 +90,16 @@ void space_counter();
 void recording_alldata_toFile();
 void transaction_record(int transfer , int receiver , char who,unsigned int amount);
 void integer_to_char(unsigned int value);
+
 void get_time();
 void get_limit_amount(int user_index);
+unsigned int calculate_amounts_same_days(int to_calcu_index);
+
+unsigned int charArray_to_unsigned_fun(char charArray[]);
+
+
+
+void current_data_toTransfer(unsigned int current_amount_toTransfer);
 
 void welcome(){
 
@@ -255,6 +268,8 @@ void transaction_record(int transfer , int receiver , char who,unsigned int amou
 
         }
 
+        db[transfer].trc[space_array[transfer]-15].note[index_point]='$';
+        index_point++;
         for(int aaa=0; aaa<amount_counter; aaa++){
             db[transfer].trc[space_array[transfer]-15].note[index_point]=int_to_char_array_data[aaa];
             index_point++;
@@ -290,11 +305,13 @@ void transaction_record(int transfer , int receiver , char who,unsigned int amou
             db[receiver].trc[space_array[receiver]-15].note[index_point]=db[transfer].name[a];
             index_point++;
         }
-
+        db[receiver].trc[space_array[receiver]-15].note[index_point]='$';
+        index_point++;
         for(int aaa=0; aaa<amount_counter; aaa++){
             db[receiver].trc[space_array[receiver]-15].note[index_point]=int_to_char_array_data[aaa];
             index_point++;
         }
+
 
         get_time();
         for(int a=0; a<25; a++){
@@ -310,22 +327,6 @@ void transaction_record(int transfer , int receiver , char who,unsigned int amou
 
 }
 
-void integer_to_char(unsigned int value){
-
-    FILE *fptr = fopen("100.txt","w");
-
-    if(fptr==NULL){
-        printf("file opening error at integer_to_char:\n");
-    } else{
-        fprintf(fptr,"%u",value);
-    }
-    fclose(fptr);
-
-    FILE *fptr2 = fopen("100.txt","r");
-    fscanf(fptr2,"%s",&int_to_char_array_data[0]);
-
-
-}
 
 
 //id name nrc email password pOrb loan_status monthly_income
@@ -870,11 +871,123 @@ void get_limit_amount(int user_index){
 
 }
 
-void get_record(){
+void current_data_toTransfer(unsigned int current_amount_toTransfer){
+    char get_current_day[2];
+    get_time();
+    printf("current info : %s : current amount to transfer: %u",Ctime[0].c_time,current_amount_toTransfer);
+
+    get_current_day[0]=Ctime[0].c_time[9];
+    get_current_day[1]=Ctime[0].c_time[10];
+    unsigned int current_day_to_transferL = charArray_to_unsigned_fun(get_current_day);
+   // printf("\nCurrent day : %d\n",current_day_to_transfer);
+
+    current_amount_to_transfer=current_amount_toTransfer;
+    current_day_to_transfer=current_day_to_transferL;
+
+}
+
+// to calculate all amount of same days
+unsigned int calculate_amounts_same_days(int to_calcu_index){
+
+        int record_counter =space_array[to_calcu_index]-15;
+        int index_counter=0;
+
+        char amount_char_array[10];
+        char day_char_array[3];
+        for(int a=record_counter-1; a>=0 ; a--){
+
+
+           int current_record_counter =  charCounting(db[to_calcu_index].trc[a].note);
+
+           // to get $
+           for(int aa=0; aa<current_record_counter; aa++){
+                if(db[to_calcu_index].trc[a].note[aa]=='$'){
+                    break;
+                }
+
+               index_counter++;
+           }
+           int quantity_of_amount=0;
+           for(int aaa=index_counter; aaa<current_record_counter; aaa++){
+
+               if(db[to_calcu_index].trc[a].note[aaa]=='-'){
+
+                   break;
+
+               }
+               quantity_of_amount++;
+
+           }
+            index_counter++;
+           for(int x=0; x<quantity_of_amount-1 ; x++){
+
+               amount_char_array[x]=db[to_calcu_index].trc[a].note[index_counter];
+               index_counter++;
+
+           }
+            unsigned int current_record_amount = charArray_to_unsigned_fun(amount_char_array);
+            printf("current_record_amount: %d\n",current_record_amount);
+
+            //to get day of current record:
+
+            for(int xx=index_counter; xx<current_record_counter; xx++){
+
+                if(db[to_calcu_index].trc[a].note[xx]=='!'){
+                    break;
+                }
+                index_counter++;
+            }
+
+            day_char_array[0]=db[to_calcu_index].trc[a].note[index_counter+5];
+            day_char_array[1]=db[to_calcu_index].trc[a].note[index_counter+6];
+           unsigned int current_record_day= charArray_to_unsigned_fun(day_char_array);
+
+            printf("Current record day: %d\n",current_record_day);
+
+            if(current_record_day!=current_day_to_transfer){
+                break;
+            }
+
+            index_counter=0;
+        }
 
 
 
 
+}
+
+
+void integer_to_char(unsigned int value){
+
+    FILE *fptr = fopen("100.txt","w");
+
+    if(fptr==NULL){
+        printf("file opening error at integer_to_char:\n");
+    } else{
+        fprintf(fptr,"%u",value);
+    }
+    fclose(fptr);
+
+    FILE *fptr2 = fopen("100.txt","r");
+    fscanf(fptr2,"%s",&int_to_char_array_data[0]);
+
+
+}
+unsigned int charArray_to_unsigned_fun(char charArray[]){
+    unsigned int data=0;
+    FILE *fptr = fopen("100.txt","w");
+
+    if(fptr==NULL){
+        printf("file opening error at integer_to_char:\n");
+    } else{
+        fprintf(fptr,"%s",charArray);
+    }
+    fclose(fptr);
+
+    FILE *fptr2 = fopen("100.txt","r");
+    fscanf(fptr2,"%u",&data);
+
+    return data;
 }
 
 #endif //DIPLEVEL1_ZOOM_ONLINE_BANK_H
@@ -882,3 +995,7 @@ void get_record(){
 
 // to write get_record function
 // to calculate time different and trans limit
+
+//to write
+//for coming day
+// to clear for current day and amount for each transaction record
