@@ -225,12 +225,32 @@ void transfer_money(int transfer , int receiver , unsigned int amount){
     printf("loading to transfer.....\n");
 
     // to insert transaction amount limit per day function
-    db[transfer].cur_amount = db[transfer].cur_amount-amount;
-    db[receiver].cur_amount = db[receiver].cur_amount+amount;
-    printf("transaction complete!\n");
-    transaction_record(transfer,receiver,'t',amount);
-    transaction_record(transfer,receiver,'r',amount);
-    printingAllData();
+    unsigned int total_amount = calculate_amounts_same_days(transfer);
+    printf("\nName: %s : total_amount: %u\n",db[transfer].name,total_amount);
+    get_limit_amount(transfer);
+
+    total_amount = total_amount+amount;
+    printf("\n\n**************************\nTotalAmount:%u\n",total_amount);
+
+    if( total_amount>=trans_limit){
+        printf("Exceeded Limit Amount!\n ");
+        printf("You can transfer amount for: %u\n",total_amount-trans_limit);
+        userSector();
+
+
+    } else{
+
+        db[transfer].cur_amount = db[transfer].cur_amount-amount;
+        db[receiver].cur_amount = db[receiver].cur_amount+amount;
+        printf("transaction complete!\n");
+        transaction_record(transfer,receiver,'t',amount);
+        transaction_record(transfer,receiver,'r',amount);
+        printingAllData();
+    }
+
+
+
+
 
 }
 
@@ -888,11 +908,12 @@ void current_data_toTransfer(unsigned int current_amount_toTransfer){
 
 // to calculate all amount of same days
 unsigned int calculate_amounts_same_days(int to_calcu_index){
+        unsigned int total_amount_for_same_day=0;
 
         int record_counter =space_array[to_calcu_index]-15;
         int index_counter=0;
 
-        char amount_char_array[10];
+
         char day_char_array[3];
         for(int a=record_counter-1; a>=0 ; a--){
 
@@ -919,6 +940,10 @@ unsigned int calculate_amounts_same_days(int to_calcu_index){
 
            }
             index_counter++;
+           char amount_char_array[10];
+           for(int i=0; i<10; i++){
+               amount_char_array[i]='\0';
+           }
            for(int x=0; x<quantity_of_amount-1 ; x++){
 
                amount_char_array[x]=db[to_calcu_index].trc[a].note[index_counter];
@@ -926,8 +951,9 @@ unsigned int calculate_amounts_same_days(int to_calcu_index){
 
            }
             unsigned int current_record_amount = charArray_to_unsigned_fun(amount_char_array);
-            printf("current_record_amount: %d\n",current_record_amount);
+            printf("\ncurrent_record_amount: %d\n",current_record_amount);
 
+            total_amount_for_same_day = total_amount_for_same_day+current_record_amount;
             //to get day of current record:
 
             for(int xx=index_counter; xx<current_record_counter; xx++){
@@ -945,15 +971,18 @@ unsigned int calculate_amounts_same_days(int to_calcu_index){
             printf("Current record day: %d\n",current_record_day);
 
             if(current_record_day!=current_day_to_transfer){
+                total_amount_for_same_day = total_amount_for_same_day+current_record_amount;
                 break;
             }
+//            else{
+//                total_amount_for_same_day = total_amount_for_same_day+current_record_amount;
+//            }
 
             index_counter=0;
         }
+    printf(" total amount for same day! %u",total_amount_for_same_day);
 
-
-
-
+    return total_amount_for_same_day;
 }
 
 
